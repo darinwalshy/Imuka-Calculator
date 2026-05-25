@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Imuka Staff Calc</title>
+    <link rel="manifest" href="manifest.json">
+    <style>
+        body { font-family: -apple-system, sans-serif; padding: 20px; background: #f0f2f5; color: #1c1e21; }
+        .card { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        h2 { margin-top: 0; color: #1877f2; }
+        input { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid #ddd; border-radius: 8px; font-size: 16px; box-sizing: border-box; }
+        .result-box { margin-top: 20px; padding: 15px; background: #e7f3ff; border-radius: 8px; text-align: center; }
+        #result { font-size: 24px; font-weight: bold; color: #0e5a32; }
+        .btn-wa { background: #25D366; color: white; border: none; width: 100%; padding: 15px; border-radius: 8px; font-size: 16px; font-weight: bold; margin-top: 15px; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h2>Item Calculator</h2>
+        <div id="inputs"></div>
+        <div class="result-box">
+            Total: <span id="result">0</span>
+        </div>
+        <button class="btn-wa" onclick="sendWhatsApp()">Send via WhatsApp</button>
+    </div>
+
+    <script>
+        const container = document.getElementById('inputs');
+        for (let i = 1; i <= 10; i++) {
+            const input = document.createElement('input');
+            input.type = 'number';
+            input.placeholder = 'Item ' + i;
+            input.addEventListener('input', calculate);
+            container.appendChild(input);
+        }
+
+        function calculate() {
+            let sum = 0;
+            document.querySelectorAll('input').forEach(input => {
+                sum += parseFloat(input.value) || 0;
+            });
+            document.getElementById('result').innerText = sum.toLocaleString();
+        }
+
+        function sendWhatsApp() {
+            const total = document.getElementById('result').innerText;
+            const phone = "256700000000"; // REPLACE WITH YOUR NUMBER
+            const msg = window.encodeURIComponent("Staff Report: Total sum is " + total);
+            window.open("https://wa.me/" + phone + "?text=" + msg, "_blank");
+        }
+
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('sw.js');
+        }
+    </script>
+</body>
+</html>
