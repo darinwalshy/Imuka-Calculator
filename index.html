@@ -3,53 +3,145 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Imuka Staff Calc</title>
+    <title>Imuka Staff Tools</title>
     <link rel="manifest" href="manifest.json">
     <style>
-        body { font-family: -apple-system, sans-serif; padding: 20px; background: #f0f2f5; color: #1c1e21; }
-        .card { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-        h2 { margin-top: 0; color: #1877f2; }
-        input { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid #ddd; border-radius: 8px; font-size: 16px; box-sizing: border-box; }
+        body { font-family: -apple-system, sans-serif; padding: 15px; background: #f0f2f5; color: #1c1e21; margin: 0; }
+        
+        /* App Shell Navigation */
+        header { background: #1877f2; color: white; padding: 15px; text-align: center; border-radius: 0 0 12px 12px; margin-bottom: 15px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        h1 { margin: 0; font-size: 20px; }
+        nav { display: flex; gap: 10px; justify-content: center; margin-top: 10px; }
+        nav button { background: rgba(255,255,255,0.2); color: white; border: none; padding: 8px 16px; border-radius: 20px; font-weight: bold; cursor: pointer; }
+        nav button.active { background: white; color: #1877f2; }
+
+        /* Calculator Content Area */
+        .card { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+        h2 { margin-top: 0; color: #333; font-size: 18px; }
+        label { display: block; margin-top: 12px; font-weight: bold; font-size: 14px; color: #606770; }
+        input { width: 100%; padding: 12px; margin: 6px 0; border: 1px solid #ddd; border-radius: 8px; font-size: 16px; box-sizing: border-box; }
+        
+        /* Results and Actions */
         .result-box { margin-top: 20px; padding: 15px; background: #e7f3ff; border-radius: 8px; text-align: center; }
-        #result { font-size: 24px; font-weight: bold; color: #0e5a32; }
-        .btn-wa { background: #25D366; color: white; border: none; width: 100%; padding: 15px; border-radius: 8px; font-size: 16px; font-weight: bold; margin-top: 15px; cursor: pointer; }
+        #result-label { font-size: 14px; color: #555; }
+        #result-value { font-size: 24px; font-weight: bold; color: #0e5a32; display: block; margin-top: 5px; }
+        .btn-action { background: #25D366; color: white; border: none; width: 100%; padding: 15px; border-radius: 8px; font-size: 16px; font-weight: bold; margin-top: 15px; cursor: pointer; }
     </style>
 </head>
 <body>
-    <div class="card">
-        <h2>Item Calculator</h2>
-        <div id="inputs"></div>
-        <div class="result-box">
-            Total: <span id="result">0</span>
-        </div>
-        <button class="btn-wa" onclick="sendWhatsApp()">Send via WhatsApp</button>
-    </div>
+
+    <header>
+        <h1>Imuka Community Tools</h1>
+        <nav>
+            <button id="btn-cassava" class="active" onclick="switchTool('cassava')">Cassava Profit</button>
+            <button id="btn-avocado" onclick="switchTool('avocado')">Avocado Profit</button>
+        </nav>
+    </header>
+
+    <main class="card" id="tool-sandbox">
+        </main>
 
     <script>
-        const container = document.getElementById('inputs');
-        for (let i = 1; i <= 10; i++) {
-            const input = document.createElement('input');
-            input.type = 'number';
-            input.placeholder = 'Item ' + i;
-            input.addEventListener('input', calculate);
-            container.appendChild(input);
-        }
+        // 1. DEFINE YOUR CALCULATORS & FORMULAS HERE
+        const tools = {
+            cassava: {
+                title: "Cassava Chips Profit Calculator",
+                fields: [
+                    { id: "raw-cost", label: "Cost of Raw Cassava (UGX)", placeholder: "e.g. 20000" },
+                    { id: "oil-cost", label: "Cost of Frying Oil & Charcoal (UGX)", placeholder: "e.g. 15000" },
+                    { id: "sales", label: "Total Estimated Sales Revenue (UGX)", placeholder: "e.g. 55000" }
+                ],
+                calculate: () => {
+                    const raw = parseFloat(document.getElementById('raw-cost').value) || 0;
+                    const overhead = parseFloat(document.getElementById('oil-cost').value) || 0;
+                    const revenue = parseFloat(document.getElementById('sales').value) || 0;
+                    return revenue - (raw + overhead);
+                }
+            },
+            avocado: {
+                title: "Avocado Wholesale Profit Calculator",
+                fields: [
+                    { id: "buying-price", label: "Purchase Cost per Avocado (UGX)", placeholder: "e.g. 500" },
+                    { id: "qty-bought", label: "Total Quantity Bought", placeholder: "e.g. 100" },
+                    { id: "selling-price", label: "Selling Price per Avocado (UGX)", placeholder: "e.g. 800" },
+                    { id: "spoiled-qty", label: "Number of Spoiled/Unsold Avocados", placeholder: "e.g. 10" }
+                ],
+                calculate: () => {
+                    const buyPrice = parseFloat(document.getElementById('buying-price').value) || 0;
+                    const qty = parseFloat(document.getElementById('qty-bought').value) || 0;
+                    const sellPrice = parseFloat(document.getElementById('selling-price').value) || 0;
+                    const spoiled = parseFloat(document.getElementById('spoiled-qty').value) || 0;
+                    
+                    const totalCost = buyPrice * qty;
+                    const totalSales = sellPrice * (qty - spoiled);
+                    return totalSales - totalCost;
+                }
+            }
+        };
 
-        function calculate() {
-            let sum = 0;
-            document.querySelectorAll('input').forEach(input => {
-                sum += parseFloat(input.value) || 0;
+        let currentTool = 'cassava';
+
+        // 2. LOGIC TO INJECT THE CALCULATOR INTO THE APP SHELL
+        function switchTool(toolKey) {
+            currentTool = toolKey;
+            
+            // Toggle navigation button styling
+            document.querySelectorAll('nav button').forEach(btn => btn.classList.remove('active'));
+            document.getElementById('btn-' + toolKey).classList.add('active');
+            
+            const tool = tools[toolKey];
+            
+            // Build the HTML fields dynamically
+            let fieldsHtml = `<h2>${tool.title}</h2>`;
+            tool.fields.forEach(field => {
+                fieldsHtml += `
+                    <label for="${field.id}">${field.label}</label>
+                    <input type="number" id="${field.id}" placeholder="${field.placeholder}" oninput="runMath()">
+                `;
             });
-            document.getElementById('result').innerText = sum.toLocaleString();
+            
+            // Add the dynamic results panel and WhatsApp trigger
+            fieldsHtml += `
+                <div class="result-box">
+                    <span id="result-label">Estimated Net Profit</span>
+                    <span id="result-value">0 UGX</span>
+                </div>
+                <button class="btn-action" onclick="sendReport()">Send Report via WhatsApp</button>
+            `;
+            
+            document.getElementById('tool-sandbox').innerHTML = fieldsHtml;
         }
 
-        function sendWhatsApp() {
-            const total = document.getElementById('result').innerText;
-            const phone = "256700000000"; // REPLACE WITH YOUR NUMBER
-            const msg = window.encodeURIComponent("Staff Report: Total sum is " + total);
-            window.open("https://wa.me/" + phone + "?text=" + msg, "_blank");
+        // 3. RUN THE CALCULATIONS IN REAL TIME
+        function runMath() {
+            const profit = tools[currentTool].calculate();
+            document.getElementById('result-value').innerText = profit.toLocaleString() + " UGX";
         }
 
+        // 4. FORMAT AND SEND THE DATA VIA WHATSAPP
+        function sendReport() {
+            const profit = document.getElementById('result-value').innerText;
+            const phone = "256700000000"; // ⚠️ REPLACE WITH YOUR ACTIVE WHATSAPP NUMBER
+            
+            let reportSummary = `Imuka Business Report%0A`;
+            reportSummary += `Tool: ${tools[currentTool].title}%0A`;
+            
+            // Automatically scrape all field values currently on screen
+            tools[currentTool].fields.forEach(field => {
+                const value = document.getElementById(field.id).value || "0";
+                reportSummary += `${field.label}: ${parseInt(value).toLocaleString()}%0A`;
+            });
+            
+            reportSummary += `---------------------%0A`;
+            reportSummary += `*Final Net Profit: ${profit}*`;
+            
+            window.open(`https://wa.me/${phone}?text=${reportSummary}`, "_blank");
+        }
+
+        // Initialize the default tool on load
+        switchTool('cassava');
+
+        // Register Service Worker for Offline Execution
         if ('serviceWorker' in navigator) {
             navigator.serviceWorker.register('sw.js');
         }
