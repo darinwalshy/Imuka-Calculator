@@ -59,7 +59,7 @@
                 }
             },
             avocado: {
-                title: "Avocado Wholesale Profit Calculator",
+                title: "Avocado Wholesale Profi Calculator",
                 fields: [
                     { id: "buying-price", label: "Purchase Cost per Avocado (UGX)", placeholder: "e.g. 500" },
                     { id: "qty-bought", label: "Total Quantity Bought", placeholder: "e.g. 100" },
@@ -72,8 +72,17 @@
                     const sellPrice = parseFloat(document.getElementById('selling-price').value) || 0;
                     const spoiled = parseFloat(document.getElementById('spoiled-qty').value) || 0;
                     
+                    // SAFETY CHECK: If we haven't entered basic quantities or prices yet, keep profit at 0
+                    if (buyPrice === 0 || qty === 0 || sellPrice === 0) {
+                        return 0; 
+                    }
+                    
                     const totalCost = buyPrice * qty;
-                    const totalSales = sellPrice * (qty - spoiled);
+                    
+                    // Ensure we don't accidentally subtract more spoiled avocados than we actually bought
+                    const validSellingQty = Math.max(0, qty - spoiled); 
+                    const totalSales = sellPrice * validSellingQty;
+                    
                     return totalSales - totalCost;
                 }
             }
