@@ -32,12 +32,14 @@
 
     <header>
         <h1>Imuka Community Tools</h1>
-        <nav>
-            <button id="btn-cassava" class="active" onclick="switchTool('cassava')">Cassava Profit</button>
-            <button id="btn-avocado" onclick="switchTool('avocado')">Avocado Profit</button>
-        </nav>
+        <div class="selector-container" style="margin-top: 15px;">
+            <select id="tool-select" onchange="switchTool(this.value)" style="width: 100%; max-width: 300px; padding: 10px; font-size: 16px; border-radius: 8px; border: none; background-color: white; color: #333; font-weight: bold;">
+                <option value="cassava">🥬 Cassava Profit</option>
+                <option value="avocado">🥑 Avocado Profit</option>
+            </select>
+        </div>
     </header>
-
+    
     <main class="card" id="tool-sandbox">
         </main>
 
@@ -94,9 +96,9 @@
         function switchTool(toolKey) {
             currentTool = toolKey;
             
-            // Toggle navigation button styling
-            document.querySelectorAll('nav button').forEach(btn => btn.classList.remove('active'));
-            document.getElementById('btn-' + toolKey).classList.add('active');
+            // Keep the dropdown selector synchronized
+            const selector = document.getElementById('tool-select');
+            if (selector) selector.value = toolKey;
             
             const tool = tools[toolKey];
             
@@ -104,11 +106,11 @@
             let fieldsHtml = `<h2>${tool.title}</h2>`;
             tool.fields.forEach(field => {
                 fieldsHtml += `
-                    <label for="${field.id}">${field.label}</label>
-                    <input type="number" id="${field.id}" placeholder="${field.placeholder}" oninput="runMath()">
+                <label for="${field.id}">${field.label}</label>
+                <input type="number" id="${field.id}" placeholder="${field.placeholder}" oninput="runMath()">
                 `;
             });
-            
+                        
             // Add the dynamic results panel and WhatsApp trigger
             fieldsHtml += `
                 <div class="result-box">
