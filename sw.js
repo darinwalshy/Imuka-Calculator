@@ -1,4 +1,4 @@
-const CACHE_NAME = 'imuka-v4'; // Your version bump
+const CACHE_NAME = 'imuka-v5'; // Your version bump
 const ASSETS = [
   'index.html',
   'manifest.json',
