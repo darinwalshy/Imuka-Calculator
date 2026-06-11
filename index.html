@@ -287,7 +287,9 @@
                     const casRaw = parseFloat(document.getElementById('cas-raw-cost').value) || 0;
                     const casDays = parseFloat(document.getElementById('cas-days').value) || 1;
                     const casStockDay = casRaw / (casDays || 1);
-                    document.getElementById('badge-cas-stock').innerText = `Daily: ${Math.round(casStockDay).toLocaleString()} UGX`;
+                    if (document.getElementById('badge-cas-stock')) {
+                        document.getElementById('badge-cas-stock').innerText = `Daily: ${Math.round(casStockDay).toLocaleString()} UGX`;
+                    }
 
                     const tGB = parseFloat(document.getElementById('trans-go-boda').value) || 0;
                     const tGT = parseFloat(document.getElementById('trans-go-taxi').value) || 0;
@@ -296,34 +298,46 @@
                     const tRT = parseFloat(document.getElementById('trans-ret_taxi').value) || 0;
                     const tRW = parseFloat(document.getElementById('trans-ret_walk').value) || 0;
                     const transDay = (tGB + tGT + tGW + tRB + tRT + tRW) / (casDays || 1);
-                    document.getElementById('badge-cas-trans').innerText = `Daily: ${Math.round(transDay).toLocaleString()} UGX`;
+                    if (document.getElementById('badge-cas-trans')) {
+                        document.getElementById('badge-cas-trans').innerText = `Daily: ${Math.round(transDay).toLocaleString()} UGX`;
+                    }
 
                     const casOilCost = parseFloat(document.getElementById('cas-oil-cost').value) || 0;
                     const casOilDays = parseFloat(document.getElementById('cas-oil-days').value) || 1;
                     const casOilDay = casOilCost / (casOilDays || 1);
-                    document.getElementById('badge-cas-oil').innerText = `Daily: ${Math.round(casOilDay).toLocaleString()} UGX`;
+                    if (document.getElementById('badge-cas-oil')) {
+                        document.getElementById('badge-cas-oil').innerText = `Daily: ${Math.round(casOilDay).toLocaleString()} UGX`;
+                    }
 
                     const casFuelCost = parseFloat(document.getElementById('cas-fuel-cost').value) || 0;
                     const casFuelDays = parseFloat(document.getElementById('cas-fuel-days').value) || 1;
                     const casFuelDay = casFuelCost / (casFuelDays || 1);
-                    document.getElementById('badge-cas-fuel').innerText = `Daily: ${Math.round(casFuelDay).toLocaleString()} UGX`;
+                    if (document.getElementById('badge-cas-fuel')) {
+                        document.getElementById('badge-cas-fuel').innerText = `Daily: ${Math.round(casFuelDay).toLocaleString()} UGX`;
+                    }
 
                     const casSaltCost = parseFloat(document.getElementById('cas-salt-cost').value) || 0;
                     const casSaltDays = parseFloat(document.getElementById('cas-salt-days').value) || 1;
                     const casSaltDay = casSaltCost / (casSaltDays || 1);
-                    document.getElementById('badge-cas-salt').innerText = `Daily: ${Math.round(casSaltDay).toLocaleString()} UGX`;
+                    if (document.getElementById('badge-cas-salt')) {
+                        document.getElementById('badge-cas-salt').innerText = `Daily: ${Math.round(casSaltDay).toLocaleString()} UGX`;
+                    }
 
                     const casKavCost = parseFloat(document.getElementById('cas-kav-cost').value) || 0;
                     const casKavDays = parseFloat(document.getElementById('cas-kav-days').value) || 1;
                     const casKavDay = casKavCost / (casKavDays || 1);
-                    document.getElementById('badge-cas-kav').innerText = `Daily: ${Math.round(casKavDay).toLocaleString()} UGX`;
+                    if (document.getElementById('badge-cas-kav')) {
+                        document.getElementById('badge-cas-kav').innerText = `Daily: ${Math.round(casKavDay).toLocaleString()} UGX`;
+                    }
 
                     const casOther = parseFloat(document.getElementById('cas-other-cost').value) || 0;
                     const casSales = parseFloat(document.getElementById('cas-sales').value) || 0;
 
                     const totalCasCostDay = casStockDay + transDay + casOilDay + casFuelDay + casSaltDay + casKavDay + casOther;
                     const casProfitDay = casSales - totalCasCostDay;
-                    document.getElementById('sub-profit-cas').innerText = `${Math.round(casProfitDay).toLocaleString()} UGX`;
+                    if (document.getElementById('sub-profit-cas')) {
+                        document.getElementById('sub-profit-cas').innerText = `${Math.round(casProfitDay).toLocaleString()} UGX`;
+                    }
 
                     // 2. Chapatti calculations
                     const chapFlour = parseFloat(document.getElementById('chap-flour-cost').value) || 0;
@@ -332,15 +346,20 @@
                     const chapBpCost = parseFloat(document.getElementById('chap-bp-cost').value) || 0;
                     const chapBpDays = parseFloat(document.getElementById('chap-bp-days').value) || 1;
                     const chapBpDay = chapBpCost / (chapBpDays || 1);
-                    document.getElementById('badge-chap-bp').innerText = `Daily: ${Math.round(chapBpDay).toLocaleString()} UGX`;
+                    if (document.getElementById('badge-chap-bp')) {
+                        document.getElementById('badge-chap-bp').innerText = `Daily: ${Math.round(chapBpDay).toLocaleString()} UGX`;
+                    }
 
-                    const chapOilDay = document.getElementById('chap-oil-shared').checked ? 0 : 
+                    const oilSharedEl = document.getElementById('chap-oil-shared');
+                    const chapOilDay = (oilSharedEl && oilSharedEl.checked) ? 0 : 
                         (parseFloat(document.getElementById('chap-oil-cost').value) || 0) / (parseFloat(document.getElementById('chap-oil-days').value) || 1);
                     
-                    const chapFuelDay = document.getElementById('chap-fuel-shared').checked ? 0 : 
+                    const fuelSharedEl = document.getElementById('chap-fuel-shared');
+                    const chapFuelDay = (fuelSharedEl && fuelSharedEl.checked) ? 0 : 
                         (parseFloat(document.getElementById('chap-fuel-cost').value) || 0) / (parseFloat(document.getElementById('chap-fuel-days').value) || 1);
                     
-                    const chapKavDay = document.getElementById('chap-kav-shared').checked ? 0 : 
+                    const kavSharedEl = document.getElementById('chap-kav-shared');
+                    const chapKavDay = (kavSharedEl && kavSharedEl.checked) ? 0 : 
                         (parseFloat(document.getElementById('chap-kav-cost').value) || 0) / (parseFloat(document.getElementById('chap-kav-days').value) || 1);
 
                     const chapWater = parseFloat(document.getElementById('chap-water-cost').value) || 0;
@@ -349,12 +368,16 @@
 
                     const totalChapCostDay = chapFlour + chapOnion + chapBpDay + chapOilDay + chapFuelDay + chapKavDay + chapWater + chapOther;
                     const chapProfitDay = chapSales - totalChapCostDay;
-                    document.getElementById('sub-profit-chap').innerText = `${Math.round(chapProfitDay).toLocaleString()} UGX`;
+                    if (document.getElementById('sub-profit-chap')) {
+                        document.getElementById('sub-profit-chap').innerText = `${Math.round(chapProfitDay).toLocaleString()} UGX`;
+                    }
 
                     // 3. UI Status updates & Grand Totals
                     const grandTotalProfit = casProfitDay + chapProfitDay;
                     const targetSavings = parseFloat(document.getElementById('target-savings').value) || 0;
-                    document.getElementById('savings-status').innerText = `Savings Reserve Allocation: ${targetSavings.toLocaleString()} UGX / Day`;
+                    if (document.getElementById('savings-status')) {
+                        document.getElementById('savings-status').innerText = `Savings Reserve Allocation: ${targetSavings.toLocaleString()} UGX / Day`;
+                    }
                     
                     return grandTotalProfit; 
                 }
@@ -387,11 +410,9 @@
         let currentTool = 'cassava';
 
         function switchSubTab(tabKey) {
-            // Hide all contents and remove active states from tabs
             document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
             document.querySelectorAll('.sub-tab').forEach(el => el.classList.remove('active'));
             
-            // Activate target sub tab layout
             const contentBlock = document.getElementById(`tab-content-${tabKey}`);
             const buttonBlock = document.getElementById(`btn-tab-${tabKey}`);
             if (contentBlock) contentBlock.classList.add('active');
@@ -399,9 +420,11 @@
         }
 
         function toggleSharedField(checkboxId, targetId) {
-            const isChecked = document.getElementById(checkboxId).checked;
+            const checkbox = document.getElementById(checkboxId);
             const container = document.getElementById(targetId);
-            if (isChecked) {
+            if (!checkbox || !container) return;
+
+            if (checkbox.checked) {
                 container.classList.add('disabled-element');
             } else {
                 container.classList.remove('disabled-element');
@@ -415,3 +438,110 @@
             if (selector) selector.value = toolKey;
             
             const tool = tools[toolKey];
+            const sandbox = document.getElementById('tool-sandbox');
+            
+            if (tool.isCustomLayout) {
+                sandbox.innerHTML = tool.render();
+            } else {
+                let fieldsHtml = `<h2>${tool.title}</h2>`;
+                tool.fields.forEach(field => {
+                    fieldsHtml += `
+                    <label for="${field.id}">${field.label}</label>
+                    <input type="number" id="${field.id}" placeholder="${field.placeholder}" oninput="runMath()">
+                    `;
+                });
+                fieldsHtml += `
+                    <div class="result-box">
+                        <span id="result-label">Estimated Net Profit</span>
+                        <span id="result-value">0 UGX</span>
+                    </div>
+                    <button class="btn-action" onclick="sendReport()">Send Report via WhatsApp</button>
+                `;
+                sandbox.innerHTML = fieldsHtml;
+            }
+            restoreLocalCache();
+            runMath();
+        }
+
+        function runMath() {
+            const profit = tools[currentTool].calculate();
+            const valEl = document.getElementById('result-value');
+            if (valEl) {
+                valEl.innerText = Math.round(profit).toLocaleString() + " UGX";
+            }
+            saveLocalCache();
+        }
+
+        function saveLocalCache() {
+            const inputs = document.querySelectorAll('#tool-sandbox input, #tool-sandbox select');
+            inputs.forEach(input => {
+                if (!input || !input.id) return;
+                const key = `cache_${currentTool}_${input.id}`;
+                if (input.type === 'checkbox') {
+                    localStorage.setItem(key, input.checked);
+                } else {
+                    localStorage.setItem(key, input.value);
+                }
+            });
+        }
+
+        function restoreLocalCache() {
+            const inputs = document.querySelectorAll('#tool-sandbox input, #tool-sandbox select');
+            inputs.forEach(input => {
+                if (!input || !input.id) return;
+                const key = `cache_${currentTool}_${input.id}`;
+                const cachedVal = localStorage.getItem(key);
+                if (cachedVal !== null) {
+                    if (input.type === 'checkbox') {
+                        input.checked = (cachedVal === 'true');
+                        if (input.id.includes('shared')) {
+                            const targetWrapper = document.getElementById(`wrap-${input.id.replace('-shared', '')}`);
+                            if (targetWrapper && input.checked) targetWrapper.classList.add('disabled-element');
+                        }
+                    } else {
+                        input.value = cachedVal;
+                    }
+                }
+            });
+        }
+
+        function sendReport() {
+            const profit = document.getElementById('result-value') ? document.getElementById('result-value').innerText : "0 UGX";
+            const phone = "256700000000"; 
+            let reportSummary = `Imuka Business Report%0A`;
+            reportSummary += `Tool: ${tools[currentTool].title}%0A%0A`;
+            
+            if (currentTool === 'cassava') {
+                reportSummary += `🥖 *CASSAVA UNIT DAILY* %0A`;
+                reportSummary += `• Sales Revenue: ${parseFloat(document.getElementById('cas-sales').value || 0).toLocaleString()} UGX%0A`;
+                reportSummary += `• Sector Net Profit: ${document.getElementById('sub-profit-cas') ? document.getElementById('sub-profit-cas').innerText : "0 UGX"}%0A%0A`;
+                
+                reportSummary += `🫓 *CHAPATTI UNIT DAILY* %0A`;
+                reportSummary += `• Flour + Onion Cost: ${(parseFloat(document.getElementById('chap-flour-cost').value || 0) + parseFloat(document.getElementById('chap-onion-cost').value || 0)).toLocaleString()} UGX%0A`;
+                reportSummary += `• Sector Net Profit: ${document.getElementById('sub-profit-chap') ? document.getElementById('sub-profit-chap').innerText : "0 UGX"}%0A%0A`;
+                
+                reportSummary += `-------------------------%0A`;
+                reportSummary += `💰 *COMBINED OPERATIONAL PROFIT*: ${profit}%0A`;
+                reportSummary += `Target Savings Allocated: ${parseFloat(document.getElementById('target-savings').value || 0).toLocaleString()} UGX`;
+            } else {
+                tools[currentTool].fields.forEach(field => {
+                    const el = document.getElementById(field.id);
+                    const value = el ? el.value : "0";
+                    reportSummary += `${field.label}: ${parseInt(value).toLocaleString()}%0A`;
+                });
+                reportSummary += `---------------------%0A`;
+                reportSummary += `*Final Net Profit: ${profit}*`;
+            }
+            
+            window.open(`https://wa.me/${phone}?text=${reportSummary}`, "_blank");
+        }
+
+        // Initialize App Setup
+        switchTool('cassava');
+
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('sw.js');
+        }
+    </script>
+</body>
+</html>
