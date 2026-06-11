@@ -49,7 +49,13 @@
         .toggle-box input { width: auto; margin: 0; cursor: pointer; }
         .disabled-element { opacity: 0.35; pointer-events: none; background: #ebebeb !important; }
 
-        .subtotal-badge { display: block; font-size: 12px; color: #555; font-weight: bold; background: #f5f5f5; padding: 4px 8px; border-radius: 4px; text-align: right; margin-top: 2px; margin-bottom: 12px; }
+        /* COSMETIC CHANGE 1: High-Contrast Deeper Subtotal Badges to break up "Wall of Words" */
+        .subtotal-badge { display: block; font-size: 12px; color: #ffffff; font-weight: bold; background: #4e5d6c; padding: 6px 12px; border-radius: 6px; text-align: right; margin-top: 4px; margin-bottom: 16px; box-shadow: inset 0 -1px 0 rgba(0,0,0,0.15); letter-spacing: 0.5px; }
+
+        /* COSMETIC CHANGE 2: Pure Drama for Revenue Fields */
+        .revenue-dramatic-box { background: #e8f5e9 !important; border: 3px solid #25D366 !important; border-radius: 10px; padding: 12px; margin-top: 15px; box-shadow: 0 3px 6px rgba(37,211,102,0.15); }
+        .revenue-dramatic-box label { color: #0e5a32 !important; font-size: 14px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.3px; }
+        .revenue-dramatic-box input { background: #ffffff !important; border: 1px solid #a5d6a7 !important; font-size: 18px !important; font-weight: bold; color: #0e5a32 !important; padding: 12px; }
 
         /* Results and Actions */
         .result-box { margin-top: 20px; padding: 15px; background: #e7f3ff; border-radius: 8px; text-align: center; }
@@ -186,7 +192,7 @@
                                 <input type="number" id="cas-kav-cost" value="1300" oninput="runMath()">
                             </div>
                             <div class="grid-row">
-                                <label Fair="cas-kav-days">How long does the pack last? (Days)</label>
+                                <label for="cas-kav-days">How long does the pack last? (Days)</label>
                                 <input type="number" id="cas-kav-days" value="5" step="any" oninput="runMath()">
                             </div>
                             <span class="subtotal-badge" id="badge-cas-kav">Daily: 0 UGX</span>
@@ -196,9 +202,9 @@
                                 <input type="number" id="cas-other-cost" value="0" oninput="runMath()">
                             </div>
 
-                            <div class="grid-row" style="margin-top: 10px;">
-                                <label for="cas-sales" style="color: #0e5a32;">Daily Cassava Sales Revenue (UGX)</label>
-                                <input type="number" id="cas-sales" value="26000" oninput="runMath()" style="border-color: #25D366;">
+                            <div class="revenue-dramatic-box">
+                                <label for="cas-sales">💰 Daily Cassava Sales Revenue (UGX)</label>
+                                <input type="number" id="cas-sales" value="26000" oninput="runMath()">
                             </div>
                         </div>
                     </div>
@@ -290,9 +296,9 @@
                                 <input type="number" id="chap-other-cost" value="0" oninput="runMath()">
                             </div>
 
-                            <div class="grid-row" style="margin-top: 10px;">
-                                <label for="chap-sales" style="color: #0e5a32;">Daily Chapatti Sales Revenue (UGX)</label>
-                                <input type="number" id="chap-sales" value="14000" oninput="runMath()" style="border-color: #25D366;">
+                            <div class="revenue-dramatic-box">
+                                <label for="chap-sales">💰 Daily Chapatti Sales Revenue (UGX)</label>
+                                <input type="number" id="chap-sales" value="14000" oninput="runMath()">
                             </div>
                         </div>
                     </div>
