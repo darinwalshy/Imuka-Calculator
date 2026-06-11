@@ -14,8 +14,16 @@
 
         /* Calculator Content Area */
         .card { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
-        h2 { margin-top: 0; color: #333; font-size: 18px; margin-bottom: 15px; }
+        h2 { margin-top: 0; color: #333; font-size: 18px; margin-bottom: 15px; text-align: center; }
         
+        /* Sub-Tab Menu Bar for Cassava Tool */
+        .sub-tab-box { display: flex; background: #e4e6eb; padding: 4px; border-radius: 8px; margin-bottom: 15px; gap: 4px; }
+        .sub-tab { flex: 1; text-align: center; background: none; border: none; padding: 10px 5px; font-size: 12px; font-weight: bold; color: #444; border-radius: 6px; cursor: pointer; transition: all 0.2s; }
+        .sub-tab.active { background: white; color: #1877f2; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+
         /* Advanced Grouped Layout Styles */
         .section-group { background: #fdfdfd; border: 1px solid #e0e0e0; border-radius: 8px; padding: 12px; margin-bottom: 15px; }
         .section-title { font-size: 14px; font-weight: bold; margin-bottom: 10px; padding-bottom: 4px; border-bottom: 2px solid #1877f2; text-transform: uppercase; letter-spacing: 0.5px; }
@@ -26,8 +34,13 @@
         .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
         
         label { display: block; margin-top: 10px; font-weight: bold; font-size: 13px; color: #606770; }
-        input, select { width: 100%; padding: 10px; margin: 4px 0 8px 0; border: 1px solid #ddd; border-radius: 8px; font-size: 15px; box-sizing: border-box; background: #fafafa; }
+        
+        /* Standardized Inputs without Chrome/Firefox spinners */
+        input, select { width: 100%; padding: 10px; margin: 4px 0 8px 0; border: 1px solid #ddd; border-radius: 8px; font-size: 15px; box-sizing: border-box; background: #fafafa; -moz-appearance: textfield; }
         input:focus, select:focus { border-color: #1877f2; outline: none; background: #fff; }
+        
+        input::-webkit-outer-spin-button,
+        input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
         
         /* Shared cost toggle switches */
         .toggle-box { background: #f0f2f5; padding: 10px; border-radius: 6px; display: flex; align-items: center; gap: 10px; margin: 8px 0; font-size: 13px; font-weight: bold; color: #444; }
@@ -67,196 +80,207 @@
                 isCustomLayout: true,
                 render: () => {
                     return `
-                    <h2>Cassava & Chapatti Micro-Enterprise Model</h2>
+                    <h2>Cassava & Chapatti Business</h2>
                     
-                    <div class="section-group">
-                        <div class="section-title cassava-pink">🥖 Cassava Production & Transport</div>
-                        <div class="grid-2">
-                            <div>
-                                <label for="cas-raw-cost">Cassava Bulk Cost (UGX)</label>
-                                <input type="number" id="cas-raw-cost" value="10000" oninput="runMath()">
-                            </div>
-                            <div>
-                                <label for="cas-days">Days Stock Lasts</label>
-                                <input type="number" id="cas-days" value="2" step="any" oninput="runMath()">
-                            </div>
-                        </div>
-                        <span class="subtotal-badge" id="badge-cas-stock">Daily: 0 UGX</span>
-
-                        <label>Market Trip Transport (UGX)</label>
-                        <div class="grid-3">
-                            <input type="number" id="trans-go-boda" value="1500" placeholder="Go Boda" oninput="runMath()">
-                            <input type="number" id="trans-go-taxi" value="0" placeholder="Go Taxi" oninput="runMath()">
-                            <input type="number" id="trans-go-walk" value="0" placeholder="Go Walk" oninput="runMath()">
-                        </div>
-                        <div class="grid-3">
-                            <input type="number" id="trans-ret_boda" value="1500" placeholder="Return Boda" oninput="runMath()">
-                            <input type="number" id="trans-ret_taxi" value="0" placeholder="Return Taxi" oninput="runMath()">
-                            <input type="number" id="trans-ret_walk" value="0" placeholder="Return Walk" oninput="runMath()">
-                        </div>
-                        <span class="subtotal-badge" id="badge-cas-trans">Daily: 0 UGX</span>
+                    <div class="sub-tab-box">
+                        <button class="sub-tab active" id="btn-tab-cas" onclick="switchSubTab('cas')">🥖 Cassava</button>
+                        <button class="sub-tab" id="btn-tab-chap" onclick="switchSubTab('chap')">🫓 Chapatti</button>
+                        <button class="sub-tab" id="btn-tab-sum" onclick="switchSubTab('sum')">📊 Summary</button>
                     </div>
 
-                    <div class="section-group">
-                        <div class="section-title cassava-pink">🧪 Cassava Consumables Breakdown</div>
-                        <div class="grid-3">
-                            <div>
-                                <label for="cas-oil-cost">Oil Cost (UGX)</label>
-                                <input type="number" id="cas-oil-cost" value="7500" oninput="runMath()">
+                    <div id="tab-content-cas" class="tab-content active">
+                        <div class="section-group">
+                            <div class="section-title cassava-pink">🥖 Cassava Production & Transport</div>
+                            <div class="grid-2">
+                                <div>
+                                    <label for="cas-raw-cost">Cassava Bulk Cost (UGX)</label>
+                                    <input type="number" id="cas-raw-cost" value="10000" oninput="runMath()">
+                                </div>
+                                <div>
+                                    <label for="cas-days">Days Stock Lasts</label>
+                                    <input type="number" id="cas-days" value="2" step="any" oninput="runMath()">
+                                </div>
                             </div>
-                            <div>
-                                <label for="cas-oil-vol">Volume</label>
-                                <select id="cas-oil-vol" onchange="runMath()">
+                            <span class="subtotal-badge" id="badge-cas-stock">Daily: 0 UGX</span>
+
+                            <label>Market Trip Transport (UGX)</label>
+                            <div class="grid-3">
+                                <input type="number" id="trans-go-boda" value="1500" placeholder="Go Boda" oninput="runMath()">
+                                <input type="number" id="trans-go-taxi" value="0" placeholder="Go Taxi" oninput="runMath()">
+                                <input type="number" id="trans-go-walk" value="0" placeholder="Go Walk" oninput="runMath()">
+                            </div>
+                            <div class="grid-3">
+                                <input type="number" id="trans-ret_boda" value="1500" placeholder="Return Boda" oninput="runMath()">
+                                <input type="number" id="trans-ret_taxi" value="0" placeholder="Return Taxi" oninput="runMath()">
+                                <input type="number" id="trans-ret_walk" value="0" placeholder="Return Walk" oninput="runMath()">
+                            </div>
+                            <span class="subtotal-badge" id="badge-cas-trans">Daily: 0 UGX</span>
+                        </div>
+
+                        <div class="section-group">
+                            <div class="section-title cassava-pink">🧪 Cassava Consumables Breakdown</div>
+                            <div class="grid-3">
+                                <div>
+                                    <label for="cas-oil-cost">Oil Cost (UGX)</label>
+                                    <input type="number" id="cas-oil-cost" value="7500" oninput="runMath()">
+                                </div>
+                                <div>
+                                    <label for="cas-oil-vol">Volume</label>
+                                    <select id="cas-oil-vol" onchange="runMath()">
+                                        <option value="1 Litre" selected>1 L</option>
+                                        <option value="0.5 Litre">0.5 L</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label for="cas-oil-days">Days Lasts</label>
+                                    <input type="number" id="cas-oil-days" value="2.5" step="any" oninput="runMath()">
+                                </div>
+                            </div>
+                            <span class="subtotal-badge" id="badge-cas-oil">Daily: 0 UGX</span>
+
+                            <div class="grid-2">
+                                <div>
+                                    <label for="cas-fuel-cost">Fuel/Firewood (UGX)</label>
+                                    <input type="number" id="cas-fuel-cost" value="10000" oninput="runMath()">
+                                </div>
+                                <div>
+                                    <label for="cas-fuel-days">Days Lasts</label>
+                                    <input type="number" id="cas-fuel-days" value="4" step="any" oninput="runMath()">
+                                </div>
+                            </div>
+                            <span class="subtotal-badge" id="badge-cas-fuel">Daily: 0 UGX</span>
+
+                            <div class="grid-2">
+                                <div>
+                                    <label for="cas-salt-cost">Salt Cost (UGX)</label>
+                                    <input type="number" id="cas-salt-cost" value="1000" oninput="runMath()">
+                                </div>
+                                <div>
+                                    <label for="cas-salt-days">Days Lasts</label>
+                                    <input type="number" id="cas-salt-days" value="10" step="any" oninput="runMath()">
+                                </div>
+                            </div>
+                            <span class="subtotal-badge" id="badge-cas-salt">Daily: 0 UGX</span>
+
+                            <div class="grid-2">
+                                <div>
+                                    <label for="cas-kav-cost">Kavera Pack (UGX)</label>
+                                    <input type="number" id="cas-kav-cost" value="1300" oninput="runMath()">
+                                </div>
+                                <div>
+                                    <label for="cas-kav-days">Days Lasts</label>
+                                    <input type="number" id="cas-kav-days" value="5" step="any" oninput="runMath()">
+                                </div>
+                            </div>
+                            <span class="subtotal-badge" id="badge-cas-kav">Daily: 0 UGX</span>
+
+                            <label for="cas-other-cost">Other Daily Costs (UGX)</label>
+                            <input type="number" id="cas-other-cost" value="0" oninput="runMath()">
+
+                            <label for="cas-sales">Daily Cassava Sales Revenue (UGX)</label>
+                            <input type="number" id="cas-sales" value="26000" oninput="runMath()">
+                        </div>
+                    </div>
+
+                    <div id="tab-content-chap" class="tab-content">
+                        <div class="section-group">
+                            <div class="section-title chapatti-blue">🫓 Chapatti Enterprise Ingredients</div>
+                            <div class="grid-2">
+                                <div>
+                                    <label for="chap-flour-cost">Wheat Flour (1kg) Cost</label>
+                                    <input type="number" id="chap-flour-cost" value="3500" oninput="runMath()">
+                                </div>
+                                <div>
+                                    <label for="chap-onion-cost">Onion Daily Cost</label>
+                                    <input type="number" id="chap-onion-cost" value="200" oninput="runMath()">
+                                </div>
+                            </div>
+
+                            <div class="grid-2">
+                                <div>
+                                    <label for="chap-bp-cost">Baking Powder Cost</label>
+                                    <input type="number" id="chap-bp-cost" value="1000" oninput="runMath()">
+                                </div>
+                                <div>
+                                    <label for="chap-bp-days">Days Lasts</label>
+                                    <input type="number" id="chap-bp-days" value="5" step="any" oninput="runMath()">
+                                </div>
+                            </div>
+                            <span class="subtotal-badge" id="badge-chap-bp">Daily: 0 UGX</span>
+
+                            <div class="toggle-box">
+                                <input type="checkbox" id="chap-oil-shared" onchange="toggleSharedField('chap-oil-shared', 'wrap-chap-oil')">
+                                <label style="margin:0; color:#333;" for="chap-oil-shared">Cooking Oil Shared with Cassava</label>
+                            </div>
+                            <div id="wrap-chap-oil" class="grid-3">
+                                <input type="number" id="chap-oil-cost" value="7800" oninput="runMath()">
+                                <select id="chap-oil-vol" onchange="runMath()">
                                     <option value="1 Litre" selected>1 L</option>
                                     <option value="0.5 Litre">0.5 L</option>
                                 </select>
+                                <input type="number" id="chap-oil-days" value="5" step="any" oninput="runMath()">
                             </div>
-                            <div>
-                                <label for="cas-oil-days">Days Lasts</label>
-                                <input type="number" id="cas-oil-days" value="2.5" step="any" oninput="runMath()">
+
+                            <div class="toggle-box">
+                                <input type="checkbox" id="chap-fuel-shared" onchange="toggleSharedField('chap-fuel-shared', 'wrap-chap-fuel')">
+                                <label style="margin:0; color:#333;" for="chap-fuel-shared">Fuel Shared with Cassava</label>
                             </div>
+                            <div id="wrap-chap-fuel" class="grid-2">
+                                <input type="number" id="chap-fuel-cost" value="2000" oninput="runMath()">
+                                <input type="number" id="chap-fuel-days" value="2" step="any" oninput="runMath()">
+                            </div>
+
+                            <div class="toggle-box">
+                                <input type="checkbox" id="chap-kav-shared" onchange="toggleSharedField('chap-kav-shared', 'wrap-chap-kav')">
+                                <label style="margin:0; color:#333;" for="chap-kav-shared">Kaveras Shared with Cassava</label>
+                            </div>
+                            <div id="wrap-chap-kav" class="grid-2">
+                                <input type="number" id="chap-kav-cost" value="1300" oninput="runMath()">
+                                <input type="number" id="chap-kav-days" value="6" step="any" oninput="runMath()">
+                            </div>
+
+                            <div class="grid-2">
+                                <div>
+                                    <label for="chap-water-cost">Water (1 Jerrycan)</label>
+                                    <input type="number" id="chap-water-cost" value="300" oninput="runMath()">
+                                </div>
+                                <div>
+                                    <label for="chap-other-cost">Other Daily Costs</label>
+                                    <input type="number" id="chap-other-cost" value="0" oninput="runMath()">
+                                </div>
+                            </div>
+
+                            <label for="chap-sales">Daily Chapatti Sales Revenue (UGX)</label>
+                            <input type="number" id="chap-sales" value="14000" oninput="runMath()">
                         </div>
-                        <span class="subtotal-badge" id="badge-cas-oil">Daily: 0 UGX</span>
-
-                        <div class="grid-2">
-                            <div>
-                                <label for="cas-fuel-cost">Fuel/Firewood (UGX)</label>
-                                <input type="number" id="cas-fuel-cost" value="10000" oninput="runMath()">
-                            </div>
-                            <div>
-                                <label for="cas-fuel-days">Days Lasts</label>
-                                <input type="number" id="cas-fuel-days" value="4" step="any" oninput="runMath()">
-                            </div>
-                        </div>
-                        <span class="subtotal-badge" id="badge-cas-fuel">Daily: 0 UGX</span>
-
-                        <div class="grid-2">
-                            <div>
-                                <label for="cas-salt-cost">Salt Cost (UGX)</label>
-                                <input type="number" id="cas-salt-cost" value="1000" oninput="runMath()">
-                            </div>
-                            <div>
-                                <label for="cas-salt-days">Days Lasts</label>
-                                <input type="number" id="cas-salt-days" value="10" step="any" oninput="runMath()">
-                            </div>
-                        </div>
-                        <span class="subtotal-badge" id="badge-cas-salt">Daily: 0 UGX</span>
-
-                        <div class="grid-2">
-                            <div>
-                                <label for="cas-kav-cost">Kavera Pack (UGX)</label>
-                                <input type="number" id="cas-kav-cost" value="1300" oninput="runMath()">
-                            </div>
-                            <div>
-                                <label for="cas-kav-days">Days Lasts</label>
-                                <input type="number" id="cas-kav-days" value="5" step="any" oninput="runMath()">
-                            </div>
-                        </div>
-                        <span class="subtotal-badge" id="badge-cas-kav">Daily: 0 UGX</span>
-
-                        <label for="cas-other-cost">Other Daily Costs (UGX)</label>
-                        <input type="number" id="cas-other-cost" value="0" oninput="runMath()">
-
-                        <label for="cas-sales">Daily Cassava Sales Revenue (UGX)</label>
-                        <input type="number" id="cas-sales" value="26000" oninput="runMath()">
                     </div>
 
-                    <div class="section-group">
-                        <div class="section-title chapatti-blue">🫓 Chapatti Enterprise Add-on</div>
-                        <div class="grid-2">
-                            <div>
-                                <label for="chap-flour-cost">Wheat Flour (1kg) Cost</label>
-                                <input type="number" id="chap-flour-cost" value="3500" oninput="runMath()">
-                            </div>
-                            <div>
-                                <label for="chap-onion-cost">Onion Daily Cost</label>
-                                <input type="number" id="chap-onion-cost" value="200" oninput="runMath()">
-                            </div>
+                    <div id="tab-content-sum" class="tab-content">
+                        <div class="section-group" style="border-left: 4px solid #ffca28; background: #fffde7;">
+                            <label for="target-savings" style="margin-top:0; color:#5d4037;">Target Savings Requirement per day (UGX)</label>
+                            <input type="number" id="target-savings" value="7000" oninput="runMath()" style="background:#fff; border-color:#ffb300;">
                         </div>
 
-                        <div class="grid-2">
-                            <div>
-                                <label for="chap-bp-cost">Baking Powder Cost</label>
-                                <input type="number" id="chap-bp-cost" value="1000" oninput="runMath()">
+                        <div class="result-box">
+                            <div class="result-box-split">
+                                <div class="mini-result">
+                                    <span style="font-size:11px; color:#666; font-weight:bold;">🥖 Cassava Profit</span>
+                                    <div id="sub-profit-cas" style="font-weight:bold; color:#0e5a32; font-size:14px; margin-top:3px;">0 UGX</div>
+                                </div>
+                                <div class="mini-result">
+                                    <span style="font-size:11px; color:#666; font-weight:bold;">🫓 Chapatti Profit</span>
+                                    <div id="sub-profit-chap" style="font-weight:bold; color:#0e5a32; font-size:14px; margin-top:3px;">0 UGX</div>
+                                </div>
                             </div>
-                            <div>
-                                <label for="chap-bp-days">Days Lasts</label>
-                                <input type="number" id="chap-bp-days" value="5" step="any" oninput="runMath()">
-                            </div>
+                            <span id="result-label">Combined Daily Net Profit</span>
+                            <span id="result-value" style="font-size: 28px; color: #1877f2;">0 UGX</span>
+                            <div id="savings-status" style="font-size:13px; font-weight:bold; margin-top:8px; color:#444;">Savings Reserve Allocation: 0 UGX</div>
                         </div>
-                        <span class="subtotal-badge" id="badge-chap-bp">Daily: 0 UGX</span>
-
-                        <div class="toggle-box">
-                            <input type="checkbox" id="chap-oil-shared" onchange="toggleSharedField('chap-oil-shared', 'wrap-chap-oil')">
-                            <label style="margin:0; color:#333;" for="chap-oil-shared">Cooking Oil Shared with Cassava</label>
-                        </div>
-                        <div id="wrap-chap-oil" class="grid-3">
-                            <input type="number" id="chap-oil-cost" value="7800" oninput="runMath()">
-                            <select id="chap-oil-vol" onchange="runMath()">
-                                <option value="1 Litre" selected>1 L</option>
-                                <option value="0.5 Litre">0.5 L</option>
-                            </select>
-                            <input type="number" id="chap-oil-days" value="5" step="any" oninput="runMath()">
-                        </div>
-
-                        <div class="toggle-box">
-                            <input type="checkbox" id="chap-fuel-shared" onchange="toggleSharedField('chap-fuel-shared', 'wrap-chap-fuel')">
-                            <label style="margin:0; color:#333;" for="chap-fuel-shared">Fuel Shared with Cassava</label>
-                        </div>
-                        <div id="wrap-chap-fuel" class="grid-2">
-                            <input type="number" id="chap-fuel-cost" value="2000" oninput="runMath()">
-                            <input type="number" id="chap-fuel-days" value="2" step="any" oninput="runMath()">
-                        </div>
-
-                        <div class="toggle-box">
-                            <input type="checkbox" id="chap-kav-shared" onchange="toggleSharedField('chap-kav-shared', 'wrap-chap-kav')">
-                            <label style="margin:0; color:#333;" for="chap-kav-shared">Kaveras Shared with Cassava</label>
-                        </div>
-                        <div id="wrap-chap-kav" class="grid-2">
-                            <input type="number" id="chap-kav-cost" value="1300" oninput="runMath()">
-                            <input type="number" id="chap-kav-days" value="6" step="any" oninput="runMath()">
-                        </div>
-
-                        <div class="grid-2">
-                            <div>
-                                <label for="chap-water-cost">Water (1 Jerrycan)</label>
-                                <input type="number" id="chap-water-cost" value="300" oninput="runMath()">
-                            </div>
-                            <div>
-                                <label for="chap-other-cost">Other Daily Costs</label>
-                                <input type="number" id="chap-other-cost" value="0" oninput="runMath()">
-                            </div>
-                        </div>
-
-                        <label for="chap-sales">Daily Chapatti Sales Revenue (UGX)</label>
-                        <input type="number" id="chap-sales" value="14000" oninput="runMath()">
+                        <button class="btn-action" onclick="sendReport()">Send Detailed Report via WhatsApp</button>
                     </div>
-
-                    <div class="section-group" style="border-left: 4px solid #ffca28; background: #fffde7;">
-                        <label for="target-savings" style="margin-top:0; color:#5d4037;">Target Savings Requirement per day (UGX)</label>
-                        <input type="number" id="target-savings" value="7000" oninput="runMath()" style="background:#fff; border-color:#ffb300;">
-                    </div>
-
-                    <div class="result-box">
-                        <div class="result-box-split">
-                            <div class="mini-result">
-                                <span style="font-size:11px; color:#666; font-weight:bold;">🥖 Cassava Profit</span>
-                                <div id="sub-profit-cas" style="font-weight:bold; color:#0e5a32; font-size:14px; margin-top:3px;">0 UGX</div>
-                            </div>
-                            <div class="mini-result">
-                                <span style="font-size:11px; color:#666; font-weight:bold;">🫓 Chapatti Profit</span>
-                                <div id="sub-profit-chap" style="font-weight:bold; color:#0e5a32; font-size:14px; margin-top:3px;">0 UGX</div>
-                            </div>
-                        </div>
-                        <span id="result-label">Combined Daily Net Profit</span>
-                        <span id="result-value">0 UGX</span>
-                        <div id="savings-status" style="font-size:13px; font-weight:bold; margin-top:8px; color:#444;">Savings Reserve Allocation: 0 UGX</div>
-                    </div>
-                    <button class="btn-action" onclick="sendReport()">Send Detailed Report via WhatsApp</button>
                     `;
                 },
                 calculate: () => {
-                    // Check if elements are rendered in the DOM yet to prevent boot crashes
                     if (!document.getElementById('cas-raw-cost')) return 0;
 
                     // 1. Cassava calculations
@@ -362,6 +386,18 @@
 
         let currentTool = 'cassava';
 
+        function switchSubTab(tabKey) {
+            // Hide all contents and remove active states from tabs
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.sub-tab').forEach(el => el.classList.remove('active'));
+            
+            // Activate target sub tab layout
+            const contentBlock = document.getElementById(`tab-content-${tabKey}`);
+            const buttonBlock = document.getElementById(`btn-tab-${tabKey}`);
+            if (contentBlock) contentBlock.classList.add('active');
+            if (buttonBlock) buttonBlock.classList.add('active');
+        }
+
         function toggleSharedField(checkboxId, targetId) {
             const isChecked = document.getElementById(checkboxId).checked;
             const container = document.getElementById(targetId);
@@ -379,107 +415,3 @@
             if (selector) selector.value = toolKey;
             
             const tool = tools[toolKey];
-            const sandbox = document.getElementById('tool-sandbox');
-            
-            if (tool.isCustomLayout) {
-                sandbox.innerHTML = tool.render();
-            } else {
-                let fieldsHtml = `<h2>${tool.title}</h2>`;
-                tool.fields.forEach(field => {
-                    fieldsHtml += `
-                    <label for="${field.id}">${field.label}</label>
-                    <input type="number" id="${field.id}" placeholder="${field.placeholder}" oninput="runMath()">
-                    `;
-                });
-                fieldsHtml += `
-                    <div class="result-box">
-                        <span id="result-label">Estimated Net Profit</span>
-                        <span id="result-value">0 UGX</span>
-                    </div>
-                    <button class="btn-action" onclick="sendReport()">Send Report via WhatsApp</button>
-                `;
-                sandbox.innerHTML = fieldsHtml;
-            }
-            restoreLocalCache();
-            runMath();
-        }
-
-        function runMath() {
-            const profit = tools[currentTool].calculate();
-            const valEl = document.getElementById('result-value');
-            if (valEl) {
-                valEl.innerText = Math.round(profit).toLocaleString() + " UGX";
-            }
-            saveLocalCache();
-        }
-
-        function saveLocalCache() {
-            const inputs = document.querySelectorAll('#tool-sandbox input, #tool-sandbox select');
-            inputs.forEach(input => {
-                const key = `cache_${currentTool}_${input.id}`;
-                if (input.type === 'checkbox') {
-                    localStorage.setItem(key, input.checked);
-                } else {
-                    localStorage.setItem(key, input.value);
-                }
-            });
-        }
-
-        function restoreLocalCache() {
-            const inputs = document.querySelectorAll('#tool-sandbox input, #tool-sandbox select');
-            inputs.forEach(input => {
-                const key = `cache_${currentTool}_${input.id}`;
-                const cachedVal = localStorage.getItem(key);
-                if (cachedVal !== null) {
-                    if (input.type === 'checkbox') {
-                        input.checked = (cachedVal === 'true');
-                        if (input.id.includes('shared')) {
-                            const targetWrapper = document.getElementById(`wrap-${input.id.replace('-shared', '')}`);
-                            if (targetWrapper && input.checked) targetWrapper.classList.add('disabled-element');
-                        }
-                    } else {
-                        input.value = cachedVal;
-                    }
-                }
-            });
-        }
-
-        function sendReport() {
-            const profit = document.getElementById('result-value').innerText;
-            const phone = "256700000000"; 
-            let reportSummary = `Imuka Business Report%0A`;
-            reportSummary += `Tool: ${tools[currentTool].title}%0A%0A`;
-            
-            if (currentTool === 'cassava') {
-                reportSummary += `🥖 *CASSAVA UNIT DAILY* %0A`;
-                reportSummary += `• Sales Revenue: ${parseFloat(document.getElementById('cas-sales').value).toLocaleString()} UGX%0A`;
-                reportSummary += `• Sector Net Profit: ${document.getElementById('sub-profit-cas').innerText}%0A%0A`;
-                
-                reportSummary += `🫓 *CHAPATTI UNIT DAILY* %0A`;
-                reportSummary += `• Flour + Onion Cost: ${(parseFloat(document.getElementById('chap-flour-cost').value) + parseFloat(document.getElementById('chap-onion-cost').value)).toLocaleString()} UGX%0A`;
-                reportSummary += `• Sector Net Profit: ${document.getElementById('sub-profit-chap').innerText}%0A%0A`;
-                
-                reportSummary += `-------------------------%0A`;
-                reportSummary += `💰 *COMBINED OPERATIONAL PROFIT*: ${profit}%0A`;
-                reportSummary += `Target Savings Allocated: ${parseFloat(document.getElementById('target-savings').value).toLocaleString()} UGX`;
-            } else {
-                tools[currentTool].fields.forEach(field => {
-                    const value = document.getElementById(field.id).value || "0";
-                    reportSummary += `${field.label}: ${parseInt(value).toLocaleString()}%0A`;
-                });
-                reportSummary += `---------------------%0A`;
-                reportSummary += `*Final Net Profit: ${profit}*`;
-            }
-            
-            window.open(`https://wa.me/${phone}?text=${reportSummary}`, "_blank");
-        }
-
-        // Initialize App Setup
-        switchTool('cassava');
-
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('sw.js');
-        }
-    </script>
-</body>
-</html>
