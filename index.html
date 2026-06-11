@@ -256,6 +256,9 @@
                     `;
                 },
                 calculate: () => {
+                    // Check if elements are rendered in the DOM yet to prevent boot crashes
+                    if (!document.getElementById('cas-raw-cost')) return 0;
+
                     // 1. Cassava calculations
                     const casRaw = parseFloat(document.getElementById('cas-raw-cost').value) || 0;
                     const casDays = parseFloat(document.getElementById('cas-days').value) || 1;
@@ -342,6 +345,7 @@
                     { id: "spoiled-qty", label: "Number of Spoiled/Unsold Avocados", placeholder: "e.g. 10" }
                 ],
                 calculate: () => {
+                    if (!document.getElementById('buying-price')) return 0;
                     const buyPrice = parseFloat(document.getElementById('buying-price').value) || 0;
                     const qty = parseFloat(document.getElementById('qty-bought').value) || 0;
                     const sellPrice = parseFloat(document.getElementById('selling-price').value) || 0;
@@ -370,3 +374,112 @@
         }
 
         function switchTool(toolKey) {
+            currentTool = toolKey;
+            const selector = document.getElementById('tool-select');
+            if (selector) selector.value = toolKey;
+            
+            const tool = tools[toolKey];
+            const sandbox = document.getElementById('tool-sandbox');
+            
+            if (tool.isCustomLayout) {
+                sandbox.innerHTML = tool.render();
+            } else {
+                let fieldsHtml = `<h2>${tool.title}</h2>`;
+                tool.fields.forEach(field => {
+                    fieldsHtml += `
+                    <label for="${field.id}">${field.label}</label>
+                    <input type="number" id="${field.id}" placeholder="${field.placeholder}" oninput="runMath()">
+                    `;
+                });
+                fieldsHtml += `
+                    <div class="result-box">
+                        <span id="result-label">Estimated Net Profit</span>
+                        <span id="result-value">0 UGX</span>
+                    </div>
+                    <button class="btn-action" onclick="sendReport()">Send Report via WhatsApp</button>
+                `;
+                sandbox.innerHTML = fieldsHtml;
+            }
+            restoreLocalCache();
+            runMath();
+        }
+
+        function runMath() {
+            const profit = tools[currentTool].calculate();
+            const valEl = document.getElementById('result-value');
+            if (valEl) {
+                valEl.innerText = Math.round(profit).toLocaleString() + " UGX";
+            }
+            saveLocalCache();
+        }
+
+        function saveLocalCache() {
+            const inputs = document.querySelectorAll('#tool-sandbox input, #tool-sandbox select');
+            inputs.forEach(input => {
+                const key = `cache_${currentTool}_${input.id}`;
+                if (input.type === 'checkbox') {
+                    localStorage.setItem(key, input.checked);
+                } else {
+                    localStorage.setItem(key, input.value);
+                }
+            });
+        }
+
+        function restoreLocalCache() {
+            const inputs = document.querySelectorAll('#tool-sandbox input, #tool-sandbox select');
+            inputs.forEach(input => {
+                const key = `cache_${currentTool}_${input.id}`;
+                const cachedVal = localStorage.getItem(key);
+                if (cachedVal !== null) {
+                    if (input.type === 'checkbox') {
+                        input.checked = (cachedVal === 'true');
+                        if (input.id.includes('shared')) {
+                            const targetWrapper = document.getElementById(`wrap-${input.id.replace('-shared', '')}`);
+                            if (targetWrapper && input.checked) targetWrapper.classList.add('disabled-element');
+                        }
+                    } else {
+                        input.value = cachedVal;
+                    }
+                }
+            });
+        }
+
+        function sendReport() {
+            const profit = document.getElementById('result-value').innerText;
+            const phone = "256700000000"; 
+            let reportSummary = `Imuka Business Report%0A`;
+            reportSummary += `Tool: ${tools[currentTool].title}%0A%0A`;
+            
+            if (currentTool === 'cassava') {
+                reportSummary += `🥖 *CASSAVA UNIT DAILY* %0A`;
+                reportSummary += `• Sales Revenue: ${parseFloat(document.getElementById('cas-sales').value).toLocaleString()} UGX%0A`;
+                reportSummary += `• Sector Net Profit: ${document.getElementById('sub-profit-cas').innerText}%0A%0A`;
+                
+                reportSummary += `🫓 *CHAPATTI UNIT DAILY* %0A`;
+                reportSummary += `• Flour + Onion Cost: ${(parseFloat(document.getElementById('chap-flour-cost').value) + parseFloat(document.getElementById('chap-onion-cost').value)).toLocaleString()} UGX%0A`;
+                reportSummary += `• Sector Net Profit: ${document.getElementById('sub-profit-chap').innerText}%0A%0A`;
+                
+                reportSummary += `-------------------------%0A`;
+                reportSummary += `💰 *COMBINED OPERATIONAL PROFIT*: ${profit}%0A`;
+                reportSummary += `Target Savings Allocated: ${parseFloat(document.getElementById('target-savings').value).toLocaleString()} UGX`;
+            } else {
+                tools[currentTool].fields.forEach(field => {
+                    const value = document.getElementById(field.id).value || "0";
+                    reportSummary += `${field.label}: ${parseInt(value).toLocaleString()}%0A`;
+                });
+                reportSummary += `---------------------%0A`;
+                reportSummary += `*Final Net Profit: ${profit}*`;
+            }
+            
+            window.open(`https://wa.me/${phone}?text=${reportSummary}`, "_blank");
+        }
+
+        // Initialize App Setup
+        switchTool('cassava');
+
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('sw.js');
+        }
+    </script>
+</body>
+</html>
